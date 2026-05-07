@@ -72,7 +72,8 @@ const listTitle = computed(() => {
 function formatDate(d) {
   if (!d) return ''
   const dt = new Date(d)
-  return `${dt.getMonth()+1}/${dt.getDate()}`
+  if (isNaN(dt)) return d
+  return `${dt.getMonth() + 1}/${dt.getDate()}`
 }
 function openNote(id) { noteStore.openNote(id) }
 function openNewNoteModal() { uiStore.openModal('new-note-modal') }

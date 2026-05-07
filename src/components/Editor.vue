@@ -169,7 +169,8 @@ const renderedContent = computed(() => {
 function formatFullDate(d) {
   if (!d) return ''
   const dt = new Date(d)
-  return `${dt.getFullYear()}/${dt.getMonth()+1}/${dt.getDate()} ${dt.getHours()}:${String(dt.getMinutes()).padStart(2,'0')}`
+  if (isNaN(dt)) return d
+  return `${dt.getFullYear()}/${dt.getMonth() + 1}/${dt.getDate()} ${dt.getHours()}:${String(dt.getMinutes()).padStart(2, '0')}`
 }
 
 function onTitleChange() {
