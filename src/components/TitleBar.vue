@@ -21,7 +21,7 @@
           </div>
           <div v-if="uiStore.theme === 'diy'" class="diy-colors">
             <div class="diy-row" v-for="(val, key) in diyFields" :key="key">
-              <label>{{ diyLabels[key] || key }}</label>
+              <label>{{ val }}</label>
               <input type="color" :value="uiStore.diyColors[key]" @input="updateDIY(key, $event.target.value)" />
               <span class="diy-hex">{{ uiStore.diyColors[key] }}</span>
             </div>
