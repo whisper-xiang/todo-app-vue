@@ -30,18 +30,44 @@
       </div>
       <button class="titlebar-btn" @click="createSticker">＋ 便签</button>
       <button class="titlebar-btn primary" @click="openNewNoteModal">＋ 新建笔记</button>
+
+      <!-- 用户信息 -->
+      <div v-if="authStore.user" class="user-menu" v-click-outside="closeUserMenu">
+        <button class="user-avatar" @click="showUserMenu = !showUserMenu" :title="authStore.user.email">
+          {{ userInitial }}
+        </button>
+        <div v-if="showUserMenu" class="user-panel">
+          <div class="user-email">{{ authStore.user.email }}</div>
+          <button class="user-logout" @click="logout">退出登录</button>
+        </div>
+      </div>
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref, watch } from 'vue'
+import { ref, watch, computed } from 'vue'
 import { useNoteStore } from '../stores/noteStore'
 import { useUIStore } from '../stores/uiStore'
+import { useAuthStore } from '../stores/authStore'
 
 const noteStore = useNoteStore()
 const uiStore = useUIStore()
+const authStore = useAuthStore()
 const showThemePanel = ref(false)
+const showUserMenu = ref(false)
+
+const userInitial = computed(() => {
+  const email = authStore.user?.email || ''
+  return email.charAt(0).toUpperCase()
+})
+
+function closeUserMenu() { showUserMenu.value = false }
+
+async function logout() {
+  showUserMenu.value = false
+  await authStore.logout()
+}
 
 const themeIcon = ref('🌞')
 watch(() => uiStore.theme, (v) => {
@@ -129,4 +155,34 @@ const diyFields = {
 .diy-row label { width: 70px; flex-shrink: 0; text-align: right; }
 .diy-row input[type="color"] { width: 28px; height: 22px; border: none; cursor: pointer; background: none; padding: 0; }
 .diy-hex { font-family: monospace; font-size: 10px; color: var(--text-muted); }
+
+/* 用户菜单 */
+.user-menu { position: relative; -webkit-app-region: no-drag; }
+.user-avatar {
+  width: 26px; height: 26px; border-radius: 50%;
+  background: var(--accent); color: #fff;
+  border: none; font-size: 12px; font-weight: 700;
+  cursor: pointer; display: flex; align-items: center; justify-content: center;
+  transition: var(--transition);
+}
+.user-avatar:hover { background: var(--accent-hover); }
+.user-panel {
+  position: absolute; top: 34px; right: 0; min-width: 180px;
+  background: var(--bg-note); border: 1px solid var(--border);
+  border-radius: 8px; box-shadow: var(--shadow-hover);
+  padding: 8px; z-index: 999;
+}
+.user-email {
+  font-size: 11px; color: var(--text-muted);
+  padding: 4px 8px 8px; border-bottom: 1px solid var(--border);
+  word-break: break-all;
+}
+.user-logout {
+  width: 100%; margin-top: 6px; padding: 6px 8px;
+  border-radius: 6px; border: none;
+  background: transparent; color: var(--danger);
+  font-size: 13px; cursor: pointer; text-align: left;
+  transition: var(--transition);
+}
+.user-logout:hover { background: rgba(229,62,108,0.1); }
 </style>
