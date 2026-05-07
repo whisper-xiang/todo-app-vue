@@ -5,7 +5,6 @@ import './styles/main.css'
 
 const app = createApp(App)
 
-// 注册 v-click-outside 指令
 app.directive('click-outside', {
   mounted(el, binding) {
     el.__clickOutside = (event) => {
@@ -20,5 +19,12 @@ app.directive('click-outside', {
   }
 })
 
-app.use(createPinia())
+const pinia = createPinia()
+app.use(pinia)
+
+// 初始化 auth（在 app mount 之前检查 session）
+import { useAuthStore } from './stores/authStore'
+const authStore = useAuthStore(pinia)
+authStore.init()
+
 app.mount('#app')
