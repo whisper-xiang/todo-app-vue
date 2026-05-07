@@ -1,8 +1,5 @@
 <template>
   <div class="titlebar">
-    <div class="titlebar-dot red"></div>
-    <div class="titlebar-dot yellow"></div>
-    <div class="titlebar-dot green"></div>
     <div class="titlebar-title">Jotto</div>
     <div class="titlebar-actions">
       <div class="theme-switch" v-click-outside="closeThemePanel">
@@ -30,6 +27,11 @@
       </div>
       <button class="titlebar-btn" @click="createSticker">＋ 便签</button>
       <button class="titlebar-btn primary" @click="openNewNoteModal">＋ 新建笔记</button>
+
+      <!-- 全屏 -->
+      <button class="titlebar-btn" @click="toggleFullscreen" :title="isFullscreen ? '退出全屏' : '全屏'">
+        {{ isFullscreen ? '⊠' : '⊡' }}
+      </button>
 
       <!-- 用户信息 -->
       <div v-if="authStore.user" class="user-menu" v-click-outside="closeUserMenu">
@@ -67,6 +69,20 @@ function closeUserMenu() { showUserMenu.value = false }
 async function logout() {
   showUserMenu.value = false
   await authStore.logout()
+}
+
+const isFullscreen = ref(!!document.fullscreenElement)
+
+document.addEventListener('fullscreenchange', () => {
+  isFullscreen.value = !!document.fullscreenElement
+})
+
+function toggleFullscreen() {
+  if (!document.fullscreenElement) {
+    document.documentElement.requestFullscreen()
+  } else {
+    document.exitFullscreen()
+  }
 }
 
 const themeIcon = ref('🌞')
@@ -114,11 +130,7 @@ const diyFields = {
   user-select: none;
   position: relative;
 }
-.titlebar-dot { width: 12px; height: 12px; border-radius: 50%; cursor: pointer; -webkit-app-region: no-drag; }
-.titlebar-dot.red { background: #ff5f57; }
-.titlebar-dot.yellow { background: #febc2e; }
-.titlebar-dot.green { background: #28c840; }
-.titlebar-title { margin-left: 8px; font-size: 13px; color: var(--text-secondary); font-weight: 500; }
+.titlebar-title { font-size: 13px; color: var(--text-secondary); font-weight: 500; }
 .titlebar-actions { margin-left: auto; display: flex; gap: 8px; -webkit-app-region: no-drag; }
 .titlebar-btn {
   padding: 4px 10px; border-radius: 4px; border: 1px solid var(--border);
